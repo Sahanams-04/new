@@ -108,8 +108,7 @@ else:
     page = st.sidebar.radio("Navigate",
         ["🏠 Overview", "📈 Program Analysis",
          "🎯 Discount Analysis", "🏫 College Tier Analysis",
-         "🔥 Correlation", "📥 Export Data"])
-
+         "🔥 Correlation", "📥 Export Data","🤖 Ask AI"])
     if st.sidebar.button("Logout"):
         st.session_state.authenticated = False
         st.rerun()
@@ -309,6 +308,94 @@ else:
             file_name="project12_filtered_data.csv",
             mime="text/csv"
         )
+    # ── PAGE 7: ASK AI ────────────────────────────────────
+elif page == "🤖 Ask AI":
+    st.title("🤖 Ask AI About Your Data")
+    st.markdown("Ask any question about the PragyanAI pricing dataset!")
+    st.divider()
+
+    # Show data summary for context
+    data_summary = f"""
+    Dataset Summary:
+    - Total Students: {len(filtered_df):,}
+    - Total Enrolled: {int(filtered_df['Converted'].sum()):,}
+    - Conversion Rate: {filtered_df['Converted'].mean()*100:.1f}%
+    - Total Revenue: Rs {filtered_df['Revenue'].sum()/10000000:.1f} Crores
+    - Avg Final Price: Rs {filtered_df['Final_Price'].mean():,.0f}
+    - Avg Discount: {filtered_df['Discount_%'].mean():.1f}%
+    - Program Types: {', '.join(filtered_df['Program_Type'].unique())}
+    - College Tiers: {sorted(filtered_df['College_Tier'].unique())}
+    - Revenue by Program:
+      {filtered_df.groupby('Program_Type')['Revenue'].sum().to_string()}
+    - Conversion by Discount:
+      {filtered_df.groupby('Discount_%')['Converted'].mean().mul(100).round(1).to_string()}
+    """
+
+    # Chat history
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    # Display previous messages
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            st.write(msg["content"])
+
+    # User input
+    user_question = st.chat_input("Ask something about the data...")
+
+    if user_question:
+        # Show user message
+        st.session_state.messages.append({
+            "role": "user",
+            "content": user_question
+        })
+        with st.chat_message("user"):
+            st.write(user_question)
+
+        # Get AI response
+        with st.chat_message("assistant"):
+            with st.spinner("Thinking..."):
+                try:
+                    from groq import Groq
+                    client = Groq(
+                        api_key=st.secrets["GROQ_API_KEY"]
+                    )
+
+                    response = client.chat.completions.create(
+                        model="llama3-8b-8192",
+                        messages=[
+                            {
+                                "role": "system",
+                                "content": f"""You are a Data Science assistant 
+                                analysing PragyanAI's student pricing and 
+                                scholarship dataset. Answer questions based on 
+                                this data summary:
+                                {data_summary}
+                                Keep answers short, clear and data-driven. 
+                                Use rupee symbol and Indian number formatting."""
+                            },
+                            {
+                                "role": "user", 
+                                "content": user_question
+                            }
+                        ],
+                        max_tokens=500
+                    )
+
+                    answer = response.choices[0].message.content
+                    st.write(answer)
+                    st.session_state.messages.append({
+                        "role": "assistant",
+                        "content": answer
+                    })
+
+                except Exception as e:
+                    st.error("AI service unavailable. Please try again.")
+
+    # Clear chat button
+    if st.button("Clear Chat"):
+        st.session_state.messages = []
+        st.rerun()
 
         # Auto refresh
         st.divider()
