@@ -292,24 +292,8 @@ else:
         st.info("💡 Key Insight: Converted ↔ Revenue = 0.75 (strong). "
                 "Discount_% ↔ Revenue = -0.04 (nearly zero — "
                 "more discount does NOT mean more revenue!)")
-
-    # ── PAGE 6: EXPORT ────────────────────────────────
-    elif page == "📥 Export Data":
-        st.title("📥 Export Filtered Data")
-        st.divider()
-
-        st.write(f"Filtered dataset has **{len(filtered_df):,} rows**")
-        st.dataframe(filtered_df.head(50), use_container_width=True)
-
-        csv = filtered_df.to_csv(index=False)
-        st.download_button(
-            label="⬇️ Download Filtered CSV",
-            data=csv,
-            file_name="project12_filtered_data.csv",
-            mime="text/csv"
-        )
     # ── PAGE 7: ASK AI ────────────────────────────────────
-elif page == "🤖 Ask AI":
+ elif page == "🤖 Ask AI":
     st.title("🤖 Ask AI About Your Data")
     st.markdown("Ask any question about the PragyanAI pricing dataset!")
     st.divider()
@@ -381,6 +365,21 @@ elif page == "🤖 Ask AI":
                         ],
                         max_tokens=500
                     )
+    # ── PAGE 6: EXPORT ────────────────────────────────
+    elif page == "📥 Export Data":
+        st.title("📥 Export Filtered Data")
+        st.divider()
+
+        st.write(f"Filtered dataset has **{len(filtered_df):,} rows**")
+        st.dataframe(filtered_df.head(50), use_container_width=True)
+
+        csv = filtered_df.to_csv(index=False)
+        st.download_button(
+            label="⬇️ Download Filtered CSV",
+            data=csv,
+            file_name="project12_filtered_data.csv",
+            mime="text/csv"
+        )
 
                     answer = response.choices[0].message.content
                     st.write(answer)
