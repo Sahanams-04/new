@@ -9,7 +9,7 @@ import hashlib
 import time
 
 st.set_page_config(
-    page_title="PragyanAI Pricing Intelligence",
+    page_title="Student Enrollment and Pricing Analytics System",
     page_icon="📊",
     layout="wide"
 )
@@ -145,7 +145,7 @@ else:
     ]
 
     if page == "🏠 Overview":
-        st.title("📊 PragyanAI Pricing & Scholarship Intelligence Engine")
+        st.title("📊 Student Enrollment and Pricing Analytics System")
         st.markdown("**Internship Project | Sahana M S | 4GM22AI127 | PragyanAI**")
         st.divider()
 
