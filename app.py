@@ -66,7 +66,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 if not st.session_state.authenticated:
-    st.title("📊 PragyanAI Pricing & Scholarship Intelligence Engine")
+    st.title("📊 Student Enrollment and Pricing Analytics System")
     st.markdown("#### Please login to access the dashboard")
     st.divider()
 
@@ -97,7 +97,7 @@ if not st.session_state.authenticated:
                 st.error("Username already exists.")
 
 else:
-    st.sidebar.title("📊 PragyanAI BI Dashboard")
+    st.sidebar.title("📊BI Dashboard")
     st.sidebar.write(f"Welcome, **{st.session_state.username}** 👋")
     st.sidebar.divider()
 
